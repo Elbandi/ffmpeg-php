@@ -1275,6 +1275,7 @@ static AVFrame* _php_get_av_frame(ff_movie_context *ffmovie_ctx,
     /* read frames looking for wanted_frame */ 
     while (1) {
         frame = _php_read_av_frame(ffmovie_ctx, decoder_ctx, is_keyframe, pts);
+        if (!frame) break;
 
         /* hurry up if we're still a ways from the target frame */
         if (wanted_frame != GETFRAME_KEYFRAME &&
@@ -1298,9 +1299,9 @@ static AVFrame* _php_get_av_frame(ff_movie_context *ffmovie_ctx,
                 ffmovie_ctx->frame_number == wanted_frame) {
             return frame;
         }
+        av_free(frame);
     }
 
-    av_free(frame);
     return NULL;
 }
 /* }}} */
@@ -1327,6 +1328,7 @@ static int _php_get_ff_frame(ff_movie_context *ffmovie_ctx,
         ff_frame = _php_create_ffmpeg_frame(INTERNAL_FUNCTION_PARAM_PASSTHRU);
 
         if (!ff_frame) {
+            free(frame);
             php_error_docref(NULL TSRMLS_CC, E_ERROR,
                     "Error allocating ffmpeg_frame resource");
         }
@@ -1349,6 +1351,7 @@ static int _php_get_ff_frame(ff_movie_context *ffmovie_ctx,
                         (AVPicture*)frame, ff_frame->pixel_format,
                 ff_frame->width, ff_frame->height);
 
+        free(frame);
         return 1;
     } else {
         return 0;

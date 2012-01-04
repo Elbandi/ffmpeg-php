@@ -222,6 +222,7 @@ int _php_convert_frame(ff_frame_context *ff_frame, int dst_fmt) {
     } else {
         ff_frame->av_frame = dst_frame;
         ff_frame->pixel_format = dst_fmt;
+        _php_free_av_frame(src_frame);
     }
 
     return result;
