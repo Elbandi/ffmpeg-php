@@ -1285,7 +1285,7 @@ static AVFrame* _php_get_av_frame(ff_movie_context *ffmovie_ctx,
         } else {
             decoder_ctx->hurry_up = 0;
         }
-        ffmovie_ctx->frame_number++; 
+        ffmovie_ctx->frame_number = decoder_ctx->frame_number; 
 
         /* 
          * if caller wants next keyframe then get it and break out of loop.
